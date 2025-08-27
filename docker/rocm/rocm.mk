@@ -42,7 +42,7 @@ push-rocm: build-rocm
 		HSA_OVERRIDE_GFX_VERSION=$(word 2,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE=1 \
 		docker buildx bake --file=docker/rocm/rocm.hcl rocm \
-			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-${AMDGPU} \
+			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-${AMDGPU} \
 			--push \
 	&&) true
 
