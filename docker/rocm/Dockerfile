@@ -15,7 +15,8 @@ ARG AMDGPU
 
 RUN apt update -qq && \
     apt install -y wget gpg && \
-    wget -O rocm.deb https://repo.radeon.com/amdgpu-install/6.4.1/ubuntu/jammy/amdgpu-install_6.4.60401-1_all.deb && \
+#    wget -O rocm.deb https://repo.radeon.com/amdgpu-install/6.4.1/ubuntu/jammy/amdgpu-install_6.4.60401-1_all.deb && \
+    wget -O rocm.deb https://repo.radeon.com/amdgpu-install/latest/ubuntu/jammy/amdgpu-install_6.4.60403-1_all.deb && \
     apt install -y ./rocm.deb && \
     apt update && \
     apt install -qq -y rocm

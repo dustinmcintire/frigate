@@ -1,7 +1,8 @@
 BOARDS += rocm
 
 # AMD/ROCm is chunky so we build couple of smaller images for specific chipsets
-ROCM_CHIPSETS:=gfx900:9.0.0 gfx1030:10.3.0 gfx1100:11.0.0
+#ROCM_CHIPSETS:=gfx900:9.0.0 gfx1030:10.3.0 gfx1100:11.0.0
+ROCM_CHIPSETS:=gfx1100:11.0.0
 
 local-rocm: version
 	$(foreach chipset,$(ROCM_CHIPSETS), \
@@ -25,8 +26,9 @@ build-rocm: version
 		AMDGPU=$(word 1,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE_GFX_VERSION=$(word 2,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE=1 \
+		COMMIT_TAG=$(word 1,$(subst :, ,$(chipset))) \
 		docker buildx bake --file=docker/rocm/rocm.hcl rocm \
-			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rocm-$(chipset) \
+			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rocm-$(COMMIT_TAG) \
 	&&) true
 
 	unset HSA_OVERRIDE_GFX_VERSION && \
@@ -40,8 +42,9 @@ push-rocm: build-rocm
 		AMDGPU=$(word 1,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE_GFX_VERSION=$(word 2,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE=1 \
+		COMMIT_TAG=$(word 1,$(subst :, ,$(chipset))) \
 		docker buildx bake --file=docker/rocm/rocm.hcl rocm \
-			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rocm-$(chipset) \
+			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rocm-$(COMMIT_TAG) \
 			--push \
 	&&) true
 
