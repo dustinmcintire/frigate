@@ -10,7 +10,7 @@ local-rocm: version
 		HSA_OVERRIDE_GFX_VERSION=$(word 2,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE=1 \
 		docker buildx bake --file=docker/rocm/rocm.hcl rocm \
-			--set rocm.tags=frigate:latest-rocm-$(word 1,$(subst :, ,$(chipset))) \
+			--set rocm.tags=frigate:latest-rocm-${AMDGPU} \
 			--load \
 	&&) true
 	
@@ -26,9 +26,8 @@ build-rocm: version
 		AMDGPU=$(word 1,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE_GFX_VERSION=$(word 2,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE=1 \
-		COMMIT_TAG=$(word 1,$(subst :, ,$(chipset))) \
 		docker buildx bake --file=docker/rocm/rocm.hcl rocm \
-			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rocm-$(COMMIT_TAG) \
+			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rocm-${AMDGPU} \
 	&&) true
 
 	unset HSA_OVERRIDE_GFX_VERSION && \
@@ -42,9 +41,8 @@ push-rocm: build-rocm
 		AMDGPU=$(word 1,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE_GFX_VERSION=$(word 2,$(subst :, ,$(chipset))) \
 		HSA_OVERRIDE=1 \
-		COMMIT_TAG=$(word 1,$(subst :, ,$(chipset))) \
 		docker buildx bake --file=docker/rocm/rocm.hcl rocm \
-			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rocm-$(COMMIT_TAG) \
+			--set rocm.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-${AMDGPU} \
 			--push \
 	&&) true
 
